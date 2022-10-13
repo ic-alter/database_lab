@@ -41,7 +41,7 @@ public class Table {
         }
     }
 
-    public void insertTuple(String sentence){
+    private String csv_sentence_to_sql_tuple(String sentence){
         List<String> tuple = new ArrayList<>();
         tuple = String2List.string2List(sentence);
         /*StringBuilder sb_column = new StringBuilder();
@@ -51,18 +51,68 @@ public class Table {
         sb_column.deleteCharAt(sb_column.length()-1);*/
 
         StringBuilder sb_tuple = new StringBuilder();
+        sb_tuple.append("(");
         for(String value:tuple){
             sb_tuple.append("'").append(value).append("',");
         }
+        if (tuple.size() < columns.size()){
+            for (int i = 0;i< columns.size()-tuple.size();i++){
+                sb_tuple.append("'',");
+            }
+        }
         sb_tuple.deleteCharAt(sb_tuple.length()-1);
+        sb_tuple.append(")");
+        return sb_tuple.toString();
+    }
+
+    public void insertTuple(String sentence){
+
         //String insert_sql = "INSERT INTO " +table_name + " ("+sb_column.toString() + ") VALUES ("+ sb_tuple.toString()+ ");";
-        String insert_sql = "INSERT INTO " +table_name +  " VALUES ("+ sb_tuple.toString()+ ");";
-        System.out.println(insert_sql);
+        String insert_sql = "INSERT INTO " +table_name +  " VALUES "+ csv_sentence_to_sql_tuple(sentence)+ ";";
+        //System.out.println(insert_sql);
         try {
             statement_execute(insert_sql);
         } catch (SQLException e) {
             System.out.println("Table.insertTuple:插入失败");
             e.printStackTrace();
         }
+    }
+    public void insertAll(List<String> sentences,int start_index){
+        //stringBuilder最大长度65535,所以不能一次拉太长的字符串。拉500个差不多了。
+        final int step = 500;
+        int max_index = sentences.size()-1;
+        int start = start_index, end = start_index-1;
+        while (end<max_index){
+            start = end + 1;
+            end = end + step;
+            StringBuilder sb = new StringBuilder();
+            sb.append("INSERT INTO ").append(table_name).append(" VALUES ");
+            for (int i=start; i<= Math.min(end,max_index); i++){
+                sb.append(csv_sentence_to_sql_tuple(sentences.get(i))).append(",");
+            }
+            sb.deleteCharAt(sb.length()-1);
+            sb.append(";");
+            System.out.println(sb);
+            try {
+                statement_execute(sb.toString());
+            } catch (SQLException e) {
+                System.out.println("Table.insertTuple:插入失败");
+                e.printStackTrace();
+            }
+        }
+        /*StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO ").append(table_name).append(" VALUES ");
+        for (int i=start_index; i< sentences.size(); i++){
+            sb.append(csv_sentence_to_sql_tuple(sentences.get(i))).append(",");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        sb.append(";");
+        System.out.println(sb);
+        try {
+            statement_execute(sb.toString());
+        } catch (SQLException e) {
+            System.out.println("Table.insertTuple:插入失败");
+            e.printStackTrace();
+        }*/
     }
 }
