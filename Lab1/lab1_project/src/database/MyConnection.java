@@ -6,26 +6,22 @@ import java.sql.SQLException;
 
 public class MyConnection {
     private Connection connection;
-    private final String db_name;
+    private final String drive;
+    private final String url;
     private final String username;
     private final String password;
 
-    public MyConnection(String db_name, String username, String password) {
-        this.db_name = db_name;
+    public MyConnection(String drive,String url, String username, String password) {
+        this.drive = drive;
+        this.url = url;
         this.username = username;
         this.password = password;
-    }
-    public MyConnection(){
-        db_name = "database_lab";
-        username = "root";
-        password = "12345678";
     }
 
     public void connect() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+db_name,username,password);
-            System.out.println("connection is "+ connection);
+            Class.forName(drive);
+            connection = DriverManager.getConnection(url,username,password);
         } catch (SQLException e) {
             System.out.println("MyConnection.connect():数据库连接失败");
             e.printStackTrace();

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <!-- 数据库连接 -->
+    <database>
+        <drive>com.mysql.cj.jdbc.Driver</drive>
+        <url>jdbc:mysql://localhost:3306/database_lab</url>
+        <username>root</username>
+        <password>12345678</password>
+    </database>
+    <!-- csv读取 -->
+    <csv_files>
+        <csv_file>
+            <url>D:\往年课件\大三上\数据库\lab\Lab1\lab1_project\data_source\room.csv</url>
+            <table_name>room</table_name>
+        </csv_file>
+        <csv_file>
+            <url>D:\往年课件\大三上\数据库\lab\Lab1\lab1_project\data_source\student.csv</url>
+            <table_name>student</table_name>
+        </csv_file>
+    </csv_files>
+</config>
