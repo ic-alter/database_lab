@@ -14,7 +14,7 @@ public class Main {
         System.out.println("database lab1");
         XmlReader xmlReader = new XmlReader();
         HashMap<String,String> databaseInf = xmlReader.getDatabaseInf();
-        System.out.println(databaseInf.get("drive")+databaseInf.get("url")+databaseInf.get("username")+databaseInf.get("password"));
+        //System.out.println(databaseInf.get("drive")+databaseInf.get("url")+databaseInf.get("username")+databaseInf.get("password"));
         MyConnection myConnection = new MyConnection(databaseInf.get("drive"),databaseInf.get("url"),databaseInf.get("username"),databaseInf.get("password"));
         myConnection.connect();
 
