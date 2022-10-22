@@ -9,9 +9,9 @@ import java.util.List;
 public class Table {
     private final String table_name;
     private List<String> columns;
-    private final Connection connection;
+    private final MyConnection connection;
 
-    public Table(Connection connection, String table_name , String columns_sentence) {
+    public Table(MyConnection connection, String table_name , String columns_sentence) {
         this.connection = connection;
         this.table_name = table_name;
         try {
@@ -21,11 +21,11 @@ public class Table {
         }
     }
 
-    private void statement_execute(String sql) throws SQLException {
+    /*private void statement_execute(String sql) throws SQLException {
         Statement statement = connection.createStatement();
         statement.execute(sql);
         statement.close();
-    }
+    }*/
 
     public void createTable(){
         StringBuilder sb = new StringBuilder();
@@ -38,7 +38,7 @@ public class Table {
         sb.append(");");
         System.out.println(sb.toString());
         try {
-            statement_execute(sb.toString());
+            connection.statement_execute(sb.toString());
         } catch (SQLException e) {
             System.out.println("Table.createTable:建表失败");
             e.printStackTrace();
@@ -61,11 +61,6 @@ public class Table {
         sb_tuple.append("(");
         for(String value:tuple){
             sb_tuple.append("'").append(value).append("',");
-        }
-        if (tuple.size() < columns.size()){
-            for (int i = 0;i< columns.size()-tuple.size();i++){
-                sb_tuple.append("'',");
-            }
         }
         sb_tuple.deleteCharAt(sb_tuple.length()-1);
         sb_tuple.append(")");
@@ -103,7 +98,7 @@ public class Table {
             sb.append(";");
             System.out.println(sb);
             try {
-                statement_execute(sb.toString());
+                connection.statement_execute(sb.toString());
             } catch (SQLException e) {
                 System.out.println("Table.insertTuple:插入失败");
                 e.printStackTrace();

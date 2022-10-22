@@ -3,6 +3,7 @@ package database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MyConnection {
     private Connection connection;
@@ -32,6 +33,12 @@ public class MyConnection {
 
     public Connection getConnection(){
         return connection;
+    }
+
+    public void statement_execute(String sql) throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.execute(sql);
+        statement.close();
     }
 
     public void close(){

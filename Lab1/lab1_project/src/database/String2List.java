@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class String2List {
+
+    public static String safeString(String str){
+        return str.replace("'","''");
+    }
     public static List<String> string2List(String sentence) throws Exception{
         int length = sentence.length();
         int start = 0;
@@ -26,16 +30,16 @@ public class String2List {
                     }
                 }
                 if (now_quotation == start+1) res.add("");
-                else res.add(sentence.replace("\"\"","\"").substring(start+1,now_quotation));
+                else res.add(safeString(sentence.substring(start+1,now_quotation).replace("\"\"","\"")));
                 start = now_quotation+2;
             } else{
                 //逗号处理
                 int end = sentence.indexOf(",",start);
                 if (end != -1){
-                    res.add(sentence.substring(start,end));
+                    res.add(safeString(sentence.substring(start,end)));
                     start = end + 1;
                 } else {
-                    res.add(sentence.substring(start,length));
+                    res.add(safeString(sentence.substring(start,length)));
                     start = length;
                 }
             }
