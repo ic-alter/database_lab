@@ -1,4 +1,5 @@
 kdno,kcno,ccno,kdname,exptime,papername
+CHAR(4),INT,INT,VARCHAR(255),DATETIME,VARCHAR(255)
 1101,1,1,复旦'大学,2004-06-10 8:00,
 1101,1,2,"复""旦""""大学",2004-06-10 8:20,
 1101,1,3,"复旦大'学",2004-06-10 8:40,

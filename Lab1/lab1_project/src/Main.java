@@ -28,9 +28,13 @@ public class Main {
             }catch (IOException e){
                 e.printStackTrace();
             }
-            Table table = new Table(myConnection,csvFileInfList.get(i).getTable_name(), csvData.get(0));
-            table.createTable();
-            table.insertAll(csvData,1);
+            Table table = new Table(myConnection,csvFileInfList.get(i).getTable_name(), csvData.get(0),csvData.get(1));
+            try {
+                table.createTable();
+                table.insertAll(csvData,2);
+            } catch (Exception e) {
+                System.out.println(csvFileInfList.get(i).getTable_name() + ":" + e.getMessage());
+            }
         }
 
         /*
