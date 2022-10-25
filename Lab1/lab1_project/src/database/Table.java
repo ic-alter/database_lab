@@ -6,22 +6,41 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Table {
     private final String table_name;
+    private String primary_key;
+    private List<Integer> primary_key_column;
+    private HashMap<String,Integer> distinct_key;
     private List<String> columns;
     private List<String> types;
     private final MyConnection connection;
 
-    public Table(MyConnection connection, String table_name , String columns_sentence,String types_sentence) {
+    public Table(MyConnection connection, String table_name , String columns_sentence,String types_sentence,String primary_key) {
         this.connection = connection;
         this.table_name = table_name;
+        this.primary_key = primary_key;
+        primary_key_column = new ArrayList<>();
+        distinct_key = new HashMap<>();
         try {
             columns = String2List.string2List(columns_sentence);
             types = String2List.string2List(types_sentence);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void setPrimary_key_column() throws Exception{
+        List<String> primary_key_name = String2List.string2List(primary_key);
+        for(String one_key:primary_key_name){
+            int index = columns.indexOf(one_key);
+            if (index == -1){
+                throw new Exception("主键"+ one_key +"不存在，请检查xml文件中主键设置是否正确");
+            } else {
+                primary_key_column.add(index);
+            }
         }
     }
 
@@ -46,8 +65,10 @@ public class Table {
             sb.append(columns.get(i)).append(" ").append(types.get(i)).append(",");
         }
 
-        sb.deleteCharAt(sb.length()-1);//删除最后多的逗号
+        //sb.deleteCharAt(sb.length()-1);//删除最后多的逗号
+        sb.append("PRIMARY KEY(").append(primary_key).append(") ");
         sb.append(");");
+        setPrimary_key_column();
         System.out.println(sb);
         try {
             connection.statement_execute(sb.toString());
@@ -113,11 +134,20 @@ public class Table {
         return true;
     }
 
-    private String csv_sentence_to_sql_tuple(String sentence) throws Exception {
+    private String csv_sentence_to_sql_tuple(String sentence,int row_num) throws Exception {
         List<String> tuple = new ArrayList<>();
         tuple = String2List.string2List(sentence);
         if(tuple.size()!= columns.size()){
             throw new Exception("列数与数据库格式不符");
+        }
+        StringBuilder this_primary_key_value = new StringBuilder();
+        for (int index:primary_key_column){
+            this_primary_key_value.append(tuple.get(index)).append(",");
+        }
+        if (distinct_key.containsKey(this_primary_key_value.toString())){
+            throw new Exception("此行的主键值"+ this_primary_key_value +"已在第" + (distinct_key.get(this_primary_key_value.toString())+1) + "行出现过，此行不插入。");
+        } else {
+            distinct_key.put(this_primary_key_value.toString(), row_num);
         }
         /*StringBuilder sb_column = new StringBuilder();
         for (String column:columns){
@@ -158,9 +188,9 @@ public class Table {
             sb.append("INSERT INTO ").append(table_name).append(" VALUES ");
             for (int i=start; i<= Math.min(end,max_index); i++){
                 try {
-                    sb.append(csv_sentence_to_sql_tuple(sentences.get(i))).append(",");
+                    sb.append(csv_sentence_to_sql_tuple(sentences.get(i),i)).append(",");
                 } catch (Exception e) {
-                    System.out.println("文件第" + (i+1) + "行数据格式出现问题，请检查:"+e.getMessage());
+                    System.out.println("文件第" + (i+1) + "行数据出现问题，请检查:"+e.getMessage());
                     //e.printStackTrace();
                 }
             }
@@ -170,8 +200,10 @@ public class Table {
             try {
                 connection.statement_execute(sb.toString());
             } catch (SQLException e) {
-                System.out.println("Table.insertTuple:插入失败");
-                e.printStackTrace();
+                System.out.println(table_name + ":插入失败，请检查是否有以下问题");
+                System.out.println("1.文件可能已经导入过数据库");
+                System.out.println("2.文件中部分数据与数据库中已有数据主键重复");
+                //e.printStackTrace();
             }
         }
         /*StringBuilder sb = new StringBuilder();

@@ -28,7 +28,7 @@ public class Main {
             }catch (IOException e){
                 e.printStackTrace();
             }
-            Table table = new Table(myConnection,csvFileInfList.get(i).getTable_name(), csvData.get(0),csvData.get(1));
+            Table table = new Table(myConnection,csvFileInfList.get(i).getTable_name(), csvData.get(0),csvData.get(1),csvFileInfList.get(i).getPrimary_key());
             try {
                 table.createTable();
                 table.insertAll(csvData,2);

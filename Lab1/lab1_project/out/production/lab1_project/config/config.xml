@@ -13,10 +13,12 @@
         <csv_file>
             <url>D:\往年课件\大三上\数据库\lab\Lab1\lab1_project\data_source\room.csv</url>
             <table_name>room</table_name>
+            <primary_key>kdno,kcno,ccno</primary_key>
         </csv_file>
         <csv_file>
             <url>D:\往年课件\大三上\数据库\lab\Lab1\lab1_project\data_source\student.csv</url>
             <table_name>student</table_name>
+            <primary_key>registno</primary_key>
         </csv_file>
     </csv_files>
 </config>

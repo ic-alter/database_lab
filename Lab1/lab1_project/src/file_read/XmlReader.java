@@ -37,7 +37,7 @@ public class XmlReader {
             NodeList csvFiles = document.getElementsByTagName("csv_file");
             for (int i=0;i<csvFiles.getLength();i++){
                 NodeList csv_childNodes = csvFiles.item(i).getChildNodes();
-                String csv_url="",table_name="";
+                String csv_url="",table_name="",primary_key="";
                 for(int j=0;j<csv_childNodes.getLength();j++){
                     if (csv_childNodes.item(j).getNodeType() == Node.ELEMENT_NODE){
                         if (csv_childNodes.item(j).getNodeName().equals("url")){
@@ -46,9 +46,12 @@ public class XmlReader {
                         if (csv_childNodes.item(j).getNodeName().equals("table_name")){
                             table_name = csv_childNodes.item(j).getFirstChild().getNodeValue();
                         }
+                        if (csv_childNodes.item(j).getNodeName().equals("primary_key")){
+                            primary_key = csv_childNodes.item(j).getFirstChild().getNodeValue();
+                        }
                     }
                 }
-                csvFileInfList.add(new CsvFileInf(csv_url,table_name));
+                csvFileInfList.add(new CsvFileInf(csv_url,table_name,primary_key));
             }
         }catch (Exception e){
             e.printStackTrace();
